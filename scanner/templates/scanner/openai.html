@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenAI Integration</title>
+</head>
+<body>
+    <h1>OpenAI Integration</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Proceed</button>
+    </form>
+    <a href="{% url 'scanner:homepage' %}">Back to Homepage</a>
+</body>
+</html>
