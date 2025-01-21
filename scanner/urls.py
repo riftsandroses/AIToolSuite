@@ -6,4 +6,5 @@ app_name = 'scanner'
 urlpatterns = [
     path('homepage/', views.homepage, name='homepage'),
     path('openai/', views.openai_integration, name='openai_integration'),
+    path('azure/', views.azure_deployment, name='azure_deployment'),
 ]
