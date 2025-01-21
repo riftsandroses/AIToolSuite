@@ -9,9 +9,10 @@ class OpenAIIntegration(models.Model):
     model_name = models.CharField(max_length=255)
     api_key = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    attack_name = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.scan_name
+        return f"{self.user.username} - {self.attack_name}"
 
 class AzureDeployment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,6 +23,7 @@ class AzureDeployment(models.Model):
     azure_deployment_name = models.CharField(max_length=255)
     azure_api_key = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    attack_name = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.scan_name
+        return f"{self.user.username} - {self.attack_name}"

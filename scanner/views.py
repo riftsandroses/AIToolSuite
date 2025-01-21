@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import OpenAIIntegrationForm
-from .forms import AzureDeploymentForm
+from .forms import OpenAIIntegrationForm, AzureDeploymentForm
+from .models import OpenAIIntegration, AzureDeployment
 
 @login_required
 def homepage(request):
@@ -65,10 +65,28 @@ def scanstarter_openai(request):
         "Topic Attack",
         "Altered XSS Attack",
     ]
+
     if request.method == 'POST':
-        selected_attacks = request.POST.getlist('attacks')
-        # You can process the selected attacks or redirect to another page as needed
-        messages.success(request, "Attacks selected: " + ", ".join(selected_attacks))
+        selected_attacks = request.POST.getlist('attacks')  # Get the list of selected attacks
+        if selected_attacks:
+            attack_names = ", ".join(selected_attacks)  # Convert the list to a comma-separated string
+            
+            # Fetch the existing integration for the user
+            integration, created = OpenAIIntegration.objects.get_or_create(
+                user=request.user,
+                defaults={
+                    'scan_name': "Default Scan Name"  # Provide default values if needed
+                }
+            )
+            
+            # Update the attack_name field
+            integration.attack_name = attack_names
+            integration.save()
+
+            messages.success(request, "Attacks saved: " + attack_names)
+        else:
+            messages.error(request, "No attacks were selected.")
+        
         return redirect('scanner:homepage')  # Redirect to the homepage or another page
 
     return render(request, 'scanner/scanstarteropenai.html', {'attack_options': attack_options})
@@ -100,10 +118,28 @@ def scanstarter_azure(request):
         "Topic Attack",
         "Altered XSS Attack",
     ]
+
     if request.method == 'POST':
-        selected_attacks = request.POST.getlist('attacks')
-        # Process the selected attacks or redirect as needed
-        messages.success(request, "Attacks selected: " + ", ".join(selected_attacks))
+        selected_attacks = request.POST.getlist('attacks')  # Get the list of selected attacks
+        if selected_attacks:
+            attack_names = ", ".join(selected_attacks)  # Convert the list to a comma-separated string
+
+            # Fetch the existing deployment for the user
+            deployment, created = AzureDeployment.objects.get_or_create(
+                user=request.user,
+                defaults={
+                    'deployment_name': "Default Deployment Name"  # Provide default values if needed
+                }
+            )
+
+            # Update the attack_name field
+            deployment.attack_name = attack_names
+            deployment.save()
+
+            messages.success(request, "Attacks saved: " + attack_names)
+        else:
+            messages.error(request, "No attacks were selected.")
+        
         return redirect('scanner:homepage')  # Redirect to the homepage or another page
 
     return render(request, 'scanner/scanstarterazure.html', {'attack_options': attack_options})
