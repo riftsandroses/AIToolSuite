@@ -17,7 +17,7 @@ def openai_integration(request):
             integration.user = request.user
             integration.save()
             messages.success(request, "Data saved successfully!")
-            return redirect('scanner:homepage')
+            return redirect('scanner:scanstarter_openai')
     else:
         form = OpenAIIntegrationForm()
 
@@ -37,3 +37,38 @@ def azure_deployment(request):
         form = AzureDeploymentForm()
 
     return render(request, 'scanner/azure.html', {'form': form})
+
+@login_required
+def scanstarter_openai(request):
+    attack_options = [
+        "Attack Generation Test",
+        "Anti-Virus Spam Attacks",
+        "Continuation Attacks",
+        "Jailbreak Attacks",
+        "Divergence Attacks",
+        "Do Not Answer Bypass",
+        "Encoding Injection",
+        "File Format Attacks",
+        "Glitch Attacks",
+        "Goodside Attacks",
+        "Skewed Identity Attacks",
+        "Latent Injection Attack",
+        "Language Model Risk Card (LMRC) Attacks",
+        "Malware Generation Test",
+        "False Assertion Attack",
+        "Package Hallucination Attacks",
+        "Prompt Injection Attacks",
+        "Real Toxicity Attack",
+        "Snowball Attack",
+        "Suffix Attack",
+        "TAP Attack",
+        "Topic Attack",
+        "Altered XSS Attack",
+    ]
+    if request.method == 'POST':
+        selected_attacks = request.POST.getlist('attacks')
+        # You can process the selected attacks or redirect to another page as needed
+        messages.success(request, "Attacks selected: " + ", ".join(selected_attacks))
+        return redirect('scanner:homepage')  # Redirect to the homepage or another page
+
+    return render(request, 'scanner/scanstarteropenai.html', {'attack_options': attack_options})
