@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Starter - Azure</title>
+</head>
+<body>
+    <h1>Scan Starter - Azure</h1>
+    <form method="post">
+        {% csrf_token %}
+        <p>Select the types of attacks you want to test:</p>
+        <ul>
+            {% for attack in attack_options %}
+                <li>
+                    <input type="checkbox" name="attacks" value="{{ attack }}" id="{{ attack }}">
+                    <label for="{{ attack }}">{{ attack }}</label>
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Proceed</button>
+    </form>
+    <a href="{% url 'scanner:homepage' %}">Back to Homepage</a>
+</body>
+</html>

@@ -8,4 +8,5 @@ urlpatterns = [
     path('openai/', views.openai_integration, name='openai_integration'),
     path('azure/', views.azure_deployment, name='azure_deployment'),
     path('scanstarter-openai/', views.scanstarter_openai, name='scanstarter_openai'),
+    path('scanstarter-azure/', views.scanstarter_azure, name='scanstarter_azure'),
 ]
