@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import OpenAIIntegrationForm, AzureDeploymentForm
-from .models import OpenAIIntegration, AzureDeployment
+from .models import OpenAIIntegration, AzureDeployment, ValueMapping
 
 @login_required
 def homepage(request):
