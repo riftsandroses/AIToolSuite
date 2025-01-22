@@ -70,20 +70,40 @@ def scanstarter_openai(request):
         selected_attacks = request.POST.getlist('attacks')  # Get the list of selected attacks
         if selected_attacks:
             attack_names = ", ".join(selected_attacks)  # Convert the list to a comma-separated string
-            
-            # Fetch the existing integration for the user
-            integration, created = OpenAIIntegration.objects.get_or_create(
-                user=request.user,
-                defaults={
-                    'scan_name': "Default Scan Name"  # Provide default values if needed
-                }
-            )
-            
-            # Update the attack_name field
-            integration.attack_name = attack_names
-            integration.save()
 
-            messages.success(request, "Attacks saved: " + attack_names)
+            try:
+                # Retrieve the latest OpenAIIntegration for the user
+                integration = OpenAIIntegration.objects.filter(user=request.user).order_by('-created_at').first()  # Get the latest record
+
+                if not integration:
+                    # If no integration exists, create a new one
+                    integration = OpenAIIntegration.objects.create(
+                        user=request.user,
+                        scan_name="Default Scan Name"  # Provide default values if needed
+                    )
+
+                # Update the attack_name field
+                integration.attack_name = attack_names
+
+                # Now, process the attack names to get corresponding probes
+                probe_names = []
+                attack_list = attack_names.split(", ")  # Split the string by commas
+
+                for attack in attack_list:
+                    try:
+                        value_mapping = ValueMapping.objects.get(attack_name=attack)
+                        probe_names.append(value_mapping.probes_name)
+                    except ValueMapping.DoesNotExist:
+                        pass  # If the attack doesn't have a corresponding probes_name, skip it
+
+                # Join all the probes names with commas and save them in the probe_lists column
+                integration.probe_lists = ",".join(probe_names)
+                integration.save()
+
+                messages.success(request, "Attacks saved: " + attack_names)
+            except Exception as e:
+                messages.error(request, f"Error occurred: {str(e)}")
+
         else:
             messages.error(request, "No attacks were selected.")
         
@@ -124,19 +144,39 @@ def scanstarter_azure(request):
         if selected_attacks:
             attack_names = ", ".join(selected_attacks)  # Convert the list to a comma-separated string
 
-            # Fetch the existing deployment for the user
-            deployment, created = AzureDeployment.objects.get_or_create(
-                user=request.user,
-                defaults={
-                    'deployment_name': "Default Deployment Name"  # Provide default values if needed
-                }
-            )
+            try:
+                # Retrieve the latest AzureDeployment for the user
+                deployment = AzureDeployment.objects.filter(user=request.user).order_by('-created_at').first()  # Get the latest record
 
-            # Update the attack_name field
-            deployment.attack_name = attack_names
-            deployment.save()
+                if not deployment:
+                    # If no deployment exists, create a new one
+                    deployment = AzureDeployment.objects.create(
+                        user=request.user,
+                        scan_name="Default Deployment Name"  # Provide default values if needed
+                    )
 
-            messages.success(request, "Attacks saved: " + attack_names)
+                # Update the attack_name field
+                deployment.attack_name = attack_names
+
+                # Now, process the attack names to get corresponding probes
+                probe_names = []
+                attack_list = attack_names.split(", ")  # Split the string by commas
+
+                for attack in attack_list:
+                    try:
+                        value_mapping = ValueMapping.objects.get(attack_name=attack)
+                        probe_names.append(value_mapping.probes_name)
+                    except ValueMapping.DoesNotExist:
+                        pass  # If the attack doesn't have a corresponding probes_name, skip it
+
+                # Join all the probes names with commas and save them in the probe_lists column
+                deployment.probe_lists = ",".join(probe_names)
+                deployment.save()
+
+                messages.success(request, "Attacks saved: " + attack_names)
+            except Exception as e:
+                messages.error(request, f"Error occurred: {str(e)}")
+
         else:
             messages.error(request, "No attacks were selected.")
         
