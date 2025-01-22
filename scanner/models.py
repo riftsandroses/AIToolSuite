@@ -27,3 +27,10 @@ class AzureDeployment(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.attack_name}"
+    
+class ValueMapping(models.Model):
+    attack_name = models.CharField(max_length=255)  # Stores the name of the attack
+    probes_name = models.CharField(max_length=255)  # Stores the name of the probe
+
+    def __str__(self):
+        return f"{self.attack_name} -> {self.probes_name}"
