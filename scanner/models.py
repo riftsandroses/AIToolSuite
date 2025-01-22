@@ -1,10 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime
 
 class OpenAIIntegration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    scan_name = models.CharField(max_length=255)
+    scan_name = models.CharField(max_length=255)  # No primary_key=True here
     description = models.TextField()
     model_name = models.CharField(max_length=255)
     api_key = models.CharField(max_length=255)
@@ -14,9 +13,10 @@ class OpenAIIntegration(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.attack_name}"
 
+
 class AzureDeployment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    scan_name = models.CharField(max_length=255)
+    scan_name = models.CharField(max_length=255)  # No primary_key=True here
     description = models.TextField()
     azure_model_name = models.CharField(max_length=255)
     azure_endpoint_url = models.URLField()
@@ -27,7 +27,8 @@ class AzureDeployment(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.attack_name}"
-    
+
+
 class ValueMapping(models.Model):
     attack_name = models.CharField(max_length=255)  # Stores the name of the attack
     probes_name = models.CharField(max_length=500)  # Stores the name of the probe
