@@ -98,8 +98,7 @@ def scanstarter_openai(request):
 
                 # Generate absolute path for report_dir dynamically
                 base_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'yamls'))
-                processed_path = base_path.replace("\\", "\\\\")  # Replace single backslashes with double backslashes
-                report_dir = f'"{processed_path}"'  # Add double quotes at the beginning and end
+                report_dir = base_path.replace("\\", "\\\\")  # Replace single backslashes with double backslashes
 
                 yaml_file_name = f"{uuid.uuid4()}.yaml"
                 yaml_file_path = os.path.join(base_path, yaml_file_name)
@@ -219,18 +218,12 @@ def scanstarter_azure(request):
                 probe_lists_value = ",".join(probe_names)
                 deployment.probe_lists = probe_lists_value
 
-                yaml_file_name = f"{uuid.uuid4()}.yaml"
-                yaml_file_path = os.path.join(settings.MEDIA_ROOT, 'yaml', yaml_file_name)
-
                 # Generate absolute path for report_dir dynamically
                 base_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'yamls'))
-                processed_path = base_path.replace("\\", "\\\\")  # Replace single backslashes with double backslashes
-                report_dir = f'"{processed_path}"'  # Add double quotes at the beginning and end
+                report_dir = base_path.replace("\\", "\\\\")  # Replace single backslashes with double backslashes
 
                 yaml_file_name = f"{uuid.uuid4()}.yaml"
                 yaml_file_path = os.path.join(base_path, yaml_file_name)
-
-                print(report_dir)
 
                 yaml_data = {
                     'system': {
