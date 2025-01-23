@@ -263,7 +263,7 @@ def scanstarter_azure(request):
                     'reporting': {
                         'report_prefix': None,
                         'taxonomy': None,
-                        'report_dir': os.path.join(settings.MEDIA_URL, 'garak_runs'),
+                        'report_dir': os.path.join(settings.MEDIA_URL),
                         'show_100_pass_modules': True,
                     },
                 }
