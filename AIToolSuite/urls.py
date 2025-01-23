@@ -22,6 +22,6 @@ urlpatterns = [
     path('', include('login.urls')),  # Include the login app URLs
     path('homepage/', include('homepage.urls')),  # Include the homepage app URLs
     path('tres/', include('tres.urls')),  # Include the tres app URLs
-    path('scanner/', include('scanner.urls'))  # Include the scanner app URLs
+    path('scanner/', include('scanner.urls')),  # Include the scanner app URLs
 ]
 

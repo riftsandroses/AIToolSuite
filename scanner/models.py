@@ -10,6 +10,7 @@ class OpenAIIntegration(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     attack_name = models.TextField(blank=True, null=True)
     probe_lists = models.TextField(blank=True, null=True)
+    yaml_name = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.attack_name}"
@@ -26,6 +27,7 @@ class AzureDeployment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     attack_name = models.TextField(blank=True, null=True)
     probe_lists = models.TextField(blank=True, null=True)
+    yaml_name = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.attack_name}"

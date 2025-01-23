@@ -3,6 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import OpenAIIntegrationForm, AzureDeploymentForm
 from .models import OpenAIIntegration, AzureDeployment, ValueMapping
+import os
+import yaml
+import uuid
+from django.conf import settings
+from django.shortcuts import render, redirect
 
 @login_required
 def homepage(request):
@@ -67,47 +72,96 @@ def scanstarter_openai(request):
     ]
 
     if request.method == 'POST':
-        selected_attacks = request.POST.getlist('attacks')  # Get the list of selected attacks
+        selected_attacks = request.POST.getlist('attacks')
         if selected_attacks:
-            attack_names = ", ".join(selected_attacks)  # Convert the list to a comma-separated string
-
+            attack_names = ", ".join(selected_attacks)
             try:
-                # Retrieve the latest OpenAIIntegration for the user
-                integration = OpenAIIntegration.objects.filter(user=request.user).order_by('-created_at').first()  # Get the latest record
-
+                # Retrieve or create the latest OpenAIIntegration record
+                integration = OpenAIIntegration.objects.filter(user=request.user).order_by('-created_at').first()
                 if not integration:
-                    # If no integration exists, create a new one
                     integration = OpenAIIntegration.objects.create(
                         user=request.user,
-                        scan_name="Default Scan Name"  # Provide default values if needed
+                        scan_name="Default Scan Name"
                     )
 
                 # Update the attack_name field
                 integration.attack_name = attack_names
 
-                # Now, process the attack names to get corresponding probes
+                # Generate probe_lists from selected attacks
                 probe_names = []
-                attack_list = attack_names.split(", ")  # Split the string by commas
-
-                for attack in attack_list:
+                for attack in selected_attacks:
                     try:
                         value_mapping = ValueMapping.objects.get(attack_name=attack)
                         probe_names.append(value_mapping.probes_name)
                     except ValueMapping.DoesNotExist:
-                        pass  # If the attack doesn't have a corresponding probes_name, skip it
+                        pass  # Skip if no mapping exists
 
-                # Join all the probes names with commas and save them in the probe_lists column
-                integration.probe_lists = ",".join(probe_names)
+                probe_lists_value = ",".join(probe_names)
+                integration.probe_lists = probe_lists_value
+
+                # Generate YAML
+                yaml_file_name = f"{uuid.uuid4()}.yaml"
+                yaml_file_path = os.path.join(settings.MEDIA_ROOT, yaml_file_name)
+
+                yaml_data = {
+                    'system': {
+                        'verbose': 0,
+                        'narrow_output': False,
+                        'parallel_requests': False,
+                        'parallel_attempts': False,
+                        'lite': True,
+                        'show_z': False,
+                    },
+                    'run': {
+                        'seed': None,
+                        'deprefix': True,
+                        'eval_threshold': 0.5,
+                        'generations': 5,
+                        'probe_tags': None,
+                    },
+                    'plugins': {
+                        'model_type': None,
+                        'model_name': None,
+                        'probe_spec': probe_lists_value,
+                        'detector_spec': 'auto',
+                        'extended_detectors': False,
+                        'buff_spec': None,
+                        'buffs_include_original_prompt': False,
+                        'buff_max': None,
+                        'detectors': {},
+                        'generators': {},
+                        'buffs': {},
+                        'harnesses': {},
+                        'probes': {
+                            'encoding': {
+                                'payloads': ['default']
+                            }
+                        },
+                    },
+                    'reporting': {
+                        'report_prefix': None,
+                        'taxonomy': None,
+                        'report_dir': os.path.join(settings.MEDIA_URL),
+                        'show_100_pass_modules': True,
+                    },
+                }
+
+                # Save the YAML file
+                os.makedirs(os.path.dirname(yaml_file_path), exist_ok=True)
+                with open(yaml_file_path, 'w') as yaml_file:
+                    yaml.dump(yaml_data, yaml_file, default_flow_style=False)
+
+                # Save the YAML file name in the database
+                integration.yaml_name = yaml_file_name
                 integration.save()
 
-                messages.success(request, "Attacks saved: " + attack_names)
+                messages.success(request, f"YAML generated and saved: {yaml_file_name}")
             except Exception as e:
                 messages.error(request, f"Error occurred: {str(e)}")
-
         else:
             messages.error(request, "No attacks were selected.")
         
-        return redirect('scanner:homepage')  # Redirect to the homepage or another page
+        return redirect('scanner:homepage')
 
     return render(request, 'scanner/scanstarteropenai.html', {'attack_options': attack_options})
 
@@ -140,46 +194,95 @@ def scanstarter_azure(request):
     ]
 
     if request.method == 'POST':
-        selected_attacks = request.POST.getlist('attacks')  # Get the list of selected attacks
+        selected_attacks = request.POST.getlist('attacks')
         if selected_attacks:
-            attack_names = ", ".join(selected_attacks)  # Convert the list to a comma-separated string
-
+            attack_names = ", ".join(selected_attacks)
             try:
-                # Retrieve the latest AzureDeployment for the user
-                deployment = AzureDeployment.objects.filter(user=request.user).order_by('-created_at').first()  # Get the latest record
-
+                # Retrieve or create the latest AzureDeployment record
+                deployment = AzureDeployment.objects.filter(user=request.user).order_by('-created_at').first()
                 if not deployment:
-                    # If no deployment exists, create a new one
                     deployment = AzureDeployment.objects.create(
                         user=request.user,
-                        scan_name="Default Deployment Name"  # Provide default values if needed
+                        scan_name="Default Deployment Name"
                     )
 
                 # Update the attack_name field
                 deployment.attack_name = attack_names
 
-                # Now, process the attack names to get corresponding probes
+                # Generate probe_lists from selected attacks
                 probe_names = []
-                attack_list = attack_names.split(", ")  # Split the string by commas
-
-                for attack in attack_list:
+                for attack in selected_attacks:
                     try:
                         value_mapping = ValueMapping.objects.get(attack_name=attack)
                         probe_names.append(value_mapping.probes_name)
                     except ValueMapping.DoesNotExist:
-                        pass  # If the attack doesn't have a corresponding probes_name, skip it
+                        pass
 
-                # Join all the probes names with commas and save them in the probe_lists column
-                deployment.probe_lists = ",".join(probe_names)
+                probe_lists_value = ",".join(probe_names)
+                deployment.probe_lists = probe_lists_value
+
+                # Generate YAML
+                yaml_file_name = f"{uuid.uuid4()}.yaml"
+                yaml_file_path = os.path.join(settings.MEDIA_ROOT, yaml_file_name)
+
+                yaml_data = {
+                    'system': {
+                        'verbose': 0,
+                        'narrow_output': False,
+                        'parallel_requests': False,
+                        'parallel_attempts': False,
+                        'lite': True,
+                        'show_z': False,
+                    },
+                    'run': {
+                        'seed': None,
+                        'deprefix': True,
+                        'eval_threshold': 0.5,
+                        'generations': 5,
+                        'probe_tags': None,
+                    },
+                    'plugins': {
+                        'model_type': None,
+                        'model_name': None,
+                        'probe_spec': probe_lists_value,
+                        'detector_spec': 'auto',
+                        'extended_detectors': False,
+                        'buff_spec': None,
+                        'buffs_include_original_prompt': False,
+                        'buff_max': None,
+                        'detectors': {},
+                        'generators': {},
+                        'buffs': {},
+                        'harnesses': {},
+                        'probes': {
+                            'encoding': {
+                                'payloads': ['default']
+                            }
+                        },
+                    },
+                    'reporting': {
+                        'report_prefix': None,
+                        'taxonomy': None,
+                        'report_dir': os.path.join(settings.MEDIA_URL, 'garak_runs'),
+                        'show_100_pass_modules': True,
+                    },
+                }
+
+                # Save the YAML file
+                os.makedirs(os.path.dirname(yaml_file_path), exist_ok=True)
+                with open(yaml_file_path, 'w') as yaml_file:
+                    yaml.dump(yaml_data, yaml_file, default_flow_style=False)
+
+                # Save the YAML file name in the database
+                deployment.yaml_name = yaml_file_name
                 deployment.save()
 
-                messages.success(request, "Attacks saved: " + attack_names)
+                messages.success(request, f"YAML generated and saved: {yaml_file_name}")
             except Exception as e:
                 messages.error(request, f"Error occurred: {str(e)}")
-
         else:
             messages.error(request, "No attacks were selected.")
         
-        return redirect('scanner:homepage')  # Redirect to the homepage or another page
+        return redirect('scanner:homepage')
 
     return render(request, 'scanner/scanstarterazure.html', {'attack_options': attack_options})
