@@ -102,6 +102,7 @@ def scanstarter_openai(request):
 
                 yaml_file_name = f"{uuid.uuid4()}.yaml"
                 yaml_file_path = os.path.join(base_path, yaml_file_name)
+                report_prefix = yaml_file_name.replace('.yaml', '')
 
                 print(report_dir)
 
@@ -141,7 +142,7 @@ def scanstarter_openai(request):
                         },
                     },
                     'reporting': {
-                        'report_prefix': None,
+                        'report_prefix': report_prefix,
                         'taxonomy': None,
                         'report_dir': report_dir,
                         'show_100_pass_modules': True,
@@ -224,6 +225,7 @@ def scanstarter_azure(request):
 
                 yaml_file_name = f"{uuid.uuid4()}.yaml"
                 yaml_file_path = os.path.join(base_path, yaml_file_name)
+                report_prefix = yaml_file_name.replace('.yaml', '')
 
                 yaml_data = {
                     'system': {
@@ -261,7 +263,7 @@ def scanstarter_azure(request):
                         },
                     },
                     'reporting': {
-                        'report_prefix': None,
+                        'report_prefix': report_prefix,
                         'taxonomy': None,
                         'report_dir': report_dir,
                         'show_100_pass_modules': True,
