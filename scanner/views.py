@@ -76,7 +76,6 @@ def scanstarter_openai(request):
         if selected_attacks:
             attack_names = ", ".join(selected_attacks)
             try:
-                # Retrieve or create the latest OpenAIIntegration record
                 integration = OpenAIIntegration.objects.filter(user=request.user).order_by('-created_at').first()
                 if not integration:
                     integration = OpenAIIntegration.objects.create(
@@ -84,24 +83,28 @@ def scanstarter_openai(request):
                         scan_name="Default Scan Name"
                     )
 
-                # Update the attack_name field
                 integration.attack_name = attack_names
 
-                # Generate probe_lists from selected attacks
                 probe_names = []
                 for attack in selected_attacks:
                     try:
                         value_mapping = ValueMapping.objects.get(attack_name=attack)
                         probe_names.append(value_mapping.probes_name)
                     except ValueMapping.DoesNotExist:
-                        pass  # Skip if no mapping exists
+                        pass
 
                 probe_lists_value = ",".join(probe_names)
                 integration.probe_lists = probe_lists_value
 
-                # Generate YAML
+                # Generate absolute path for report_dir dynamically
+                base_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'yamls'))
+                processed_path = base_path.replace("\\", "\\\\")  # Replace single backslashes with double backslashes
+                report_dir = f'"{processed_path}"'  # Add double quotes at the beginning and end
+
                 yaml_file_name = f"{uuid.uuid4()}.yaml"
-                yaml_file_path = os.path.join(settings.MEDIA_ROOT, yaml_file_name)
+                yaml_file_path = os.path.join(base_path, yaml_file_name)
+
+                print(report_dir)
 
                 yaml_data = {
                     'system': {
@@ -141,17 +144,15 @@ def scanstarter_openai(request):
                     'reporting': {
                         'report_prefix': None,
                         'taxonomy': None,
-                        'report_dir': os.path.join(settings.MEDIA_URL),
+                        'report_dir': report_dir,
                         'show_100_pass_modules': True,
                     },
                 }
 
-                # Save the YAML file
-                os.makedirs(os.path.dirname(yaml_file_path), exist_ok=True)
+                os.makedirs(base_path, exist_ok=True)
                 with open(yaml_file_path, 'w') as yaml_file:
                     yaml.dump(yaml_data, yaml_file, default_flow_style=False)
 
-                # Save the YAML file name in the database
                 integration.yaml_name = yaml_file_name
                 integration.save()
 
@@ -198,7 +199,6 @@ def scanstarter_azure(request):
         if selected_attacks:
             attack_names = ", ".join(selected_attacks)
             try:
-                # Retrieve or create the latest AzureDeployment record
                 deployment = AzureDeployment.objects.filter(user=request.user).order_by('-created_at').first()
                 if not deployment:
                     deployment = AzureDeployment.objects.create(
@@ -206,10 +206,8 @@ def scanstarter_azure(request):
                         scan_name="Default Deployment Name"
                     )
 
-                # Update the attack_name field
                 deployment.attack_name = attack_names
 
-                # Generate probe_lists from selected attacks
                 probe_names = []
                 for attack in selected_attacks:
                     try:
@@ -221,9 +219,18 @@ def scanstarter_azure(request):
                 probe_lists_value = ",".join(probe_names)
                 deployment.probe_lists = probe_lists_value
 
-                # Generate YAML
                 yaml_file_name = f"{uuid.uuid4()}.yaml"
-                yaml_file_path = os.path.join(settings.MEDIA_ROOT, yaml_file_name)
+                yaml_file_path = os.path.join(settings.MEDIA_ROOT, 'yaml', yaml_file_name)
+
+                # Generate absolute path for report_dir dynamically
+                base_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'yamls'))
+                processed_path = base_path.replace("\\", "\\\\")  # Replace single backslashes with double backslashes
+                report_dir = f'"{processed_path}"'  # Add double quotes at the beginning and end
+
+                yaml_file_name = f"{uuid.uuid4()}.yaml"
+                yaml_file_path = os.path.join(base_path, yaml_file_name)
+
+                print(report_dir)
 
                 yaml_data = {
                     'system': {
@@ -263,17 +270,15 @@ def scanstarter_azure(request):
                     'reporting': {
                         'report_prefix': None,
                         'taxonomy': None,
-                        'report_dir': os.path.join(settings.MEDIA_URL),
+                        'report_dir': report_dir,
                         'show_100_pass_modules': True,
                     },
                 }
 
-                # Save the YAML file
                 os.makedirs(os.path.dirname(yaml_file_path), exist_ok=True)
                 with open(yaml_file_path, 'w') as yaml_file:
                     yaml.dump(yaml_data, yaml_file, default_flow_style=False)
 
-                # Save the YAML file name in the database
                 deployment.yaml_name = yaml_file_name
                 deployment.save()
 
