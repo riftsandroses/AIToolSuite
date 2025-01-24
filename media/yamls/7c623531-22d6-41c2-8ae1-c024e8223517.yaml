@@ -1,0 +1,35 @@
+plugins:
+  buff_max: null
+  buff_spec: null
+  buffs: {}
+  buffs_include_original_prompt: false
+  detector_spec: auto
+  detectors: {}
+  extended_detectors: false
+  generators: {}
+  harnesses: {}
+  model_name: null
+  model_type: null
+  probe_spec: latentinjection.LatentInjectionFactSnippetEiffel,latentinjection.LatentInjectionFactSnippetLegal,latentinjection.LatentInjectionReport,latentinjection.LatentInjectionResume,latentinjection.LatentInjectionTranslationEnFr,latentinjection.LatentInjectionTranslationEnZh,latentinjection.LatentJailbreak,latentinjection.LatentJailbreakMini,latentinjection.LatentWhois,latentinjection.LatentWhoisSnippet,packagehallucination.JavaScript,packagehallucination.Python,packagehallucination.Ruby,packagehallucination.Rust
+  probes:
+    encoding:
+      payloads:
+      - default
+reporting:
+  report_dir: C:\\Users\\Utkarsh\\Downloads\\AIToolSuite\\media\\yamls
+  report_prefix: 7c623531-22d6-41c2-8ae1-c024e8223517
+  show_100_pass_modules: true
+  taxonomy: null
+run:
+  deprefix: true
+  eval_threshold: 0.5
+  generations: 5
+  probe_tags: null
+  seed: null
+system:
+  lite: true
+  narrow_output: false
+  parallel_attempts: false
+  parallel_requests: false
+  show_z: false
+  verbose: 0

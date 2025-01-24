@@ -1,0 +1,71 @@
+/* General Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212; /* Dark background for contrast */
+    color: #E0E0E0; /* Light text color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Header Styles */
+h1 {
+    font-size: 3rem;
+    color: #FFFFFF; /* White color for the main heading */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 40px 0 20px;
+    text-align: center;
+}
+
+/* Navigation Bar Styles */
+nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    background-color: #1F1F1F; /* Darker navbar background */
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 800px; /* Limit navbar width */
+    gap: 20px; /* Space between navigation links */
+    margin: 20px auto;
+}
+
+nav a {
+    color: #B0BEC5; /* Light gray color for links */
+    text-decoration: none;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+nav a:hover {
+    color: #FFFFFF; /* White text on hover */
+    background-color: #FF4081; /* Accent color for hover effect */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    nav {
+        flex-direction: column; /* Stack links vertically on smaller screens */
+        align-items: center;
+        gap: 15px;
+    }
+
+    nav a {
+        font-size: 16px;
+        text-align: center;
+    }
+}

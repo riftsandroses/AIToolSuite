@@ -1,0 +1,120 @@
+/* General Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212; /* Dark background for contrast */
+    color: #E0E0E0; /* Light text color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+}
+
+/* Header Styles */
+h1 {
+    font-size: 3rem;
+    color: #FFFFFF; /* White color for the main heading */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+}
+
+/* Form Styles */
+form {
+    background-color: #1F1F1F; /* Slightly lighter background for the form */
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+}
+
+form div {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+form label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #B0BEC5; /* Light gray label color */
+}
+
+form input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: #121212; /* Dark text for inputs */
+    border: 1px solid #B0BEC5; /* Light gray border */
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+form input:focus {
+    border-color: #FF4081; /* Accent color for focus effect */
+}
+
+form button {
+    background-color: #FF4081; /* Accent color for the button */
+    color: #FFFFFF; /* White text for the button */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+form button:hover {
+    background-color: #E91E63; /* Slightly darker hover effect */
+    transform: scale(1.05); /* Subtle zoom-in effect */
+}
+
+/* Link Styles */
+a {
+    display: inline-block;
+    color: #B0BEC5; /* Light gray color for links */
+    text-decoration: none;
+    font-size: 16px;
+    margin-top: 20px;
+    padding: 8px 15px;
+    border: 2px solid #B0BEC5; /* Border matching link color */
+    border-radius: 5px;
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+a:hover {
+    color: #FFFFFF; /* White text on hover */
+    background-color: #FF4081; /* Accent color for hover effect */
+    border-color: #FF4081; /* Match border with hover effect */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    form {
+        width: 90%;
+        padding: 15px 20px;
+    }
+
+    form button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    a {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+}
