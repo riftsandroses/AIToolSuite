@@ -5,6 +5,7 @@ from .forms import OpenAIIntegrationForm, AzureDeploymentForm
 from .models import OpenAIIntegration, AzureDeployment, ValueMapping
 import os
 import yaml
+import subprocess
 import uuid
 from django.conf import settings
 from django.shortcuts import render, redirect
@@ -156,6 +157,12 @@ def scanstarter_openai(request):
                 integration.yaml_name = yaml_file_name
                 integration.save()
 
+                try:
+                    result_message = execute_garak_scan_openai(integration)
+                    messages.success(request, result_message)
+                except Exception as e:
+                    messages.error(request, str(e))
+
                 messages.success(request, f"YAML generated and saved: {yaml_file_name}")
             except Exception as e:
                 messages.error(request, f"Error occurred: {str(e)}")
@@ -277,6 +284,12 @@ def scanstarter_azure(request):
                 deployment.yaml_name = yaml_file_name
                 deployment.save()
 
+                try:
+                    result_message = execute_garak_scan_azure(deployment)
+                    messages.success(request, result_message)
+                except Exception as e:
+                    messages.error(request, str(e))
+
                 messages.success(request, f"YAML generated and saved: {yaml_file_name}")
             except Exception as e:
                 messages.error(request, f"Error occurred: {str(e)}")
@@ -286,3 +299,58 @@ def scanstarter_azure(request):
         return redirect('report:report')
 
     return render(request, 'scanner/scanstarterazure.html', {'attack_options': attack_options})
+
+def execute_garak_scan_openai(integration):
+    """
+    Function to execute the garak scan using the latest OpenAIIntegration instance.
+    """
+    try:
+        # Set the environment variable
+        os.environ['OPENAI_API_KEY'] = integration.api_key
+
+        # Build paths for YAML file and output JSONL
+        yaml_path = os.path.join(settings.MEDIA_ROOT, 'yamls', integration.yaml_name)
+
+        # Build the garak command
+        command = [
+            "garak",
+            "--model_type", "openai",
+            "--model_name", integration.model_name,
+            "--config", yaml_path,
+        ]
+
+        # Execute the command
+        subprocess.run(command, check=True)
+
+        return f"Scan completed successfully."
+    except Exception as e:
+        raise Exception(f"Error during scan execution: {e}")
+    
+
+def execute_garak_scan_azure(deployment):
+    """
+    Function to execute the garak scan using the latest OpenAIIntegration instance.
+    """
+    try:
+        # Set the environment variable
+        os.environ['AZURE_API_KEY'] = deployment.azure_api_key
+        os.environ['AZURE_ENDPOINT'] = deployment.azure_endpoint_url
+        os.environ['AZURE_MODEL_NAME'] = deployment.azure_model_name
+
+        # Build paths for YAML file and output JSONL
+        yaml_path = os.path.join(settings.MEDIA_ROOT, 'yamls', deployment.yaml_name)
+
+        # Build the garak command
+        command = [
+            "garak",
+            "--model_type", "azure",
+            "--model_name", deployment.azure_deployment_name,
+            "--config", yaml_path,
+        ]
+
+        # Execute the command
+        subprocess.run(command, check=True)
+
+        return f"Scan completed successfully."
+    except Exception as e:
+        raise Exception(f"Error during scan execution: {e}")
