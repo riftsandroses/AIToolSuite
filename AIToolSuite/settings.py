@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'homepage',
     'tres',
     'scanner',
-    'report',
 ]
 
 MIDDLEWARE = [

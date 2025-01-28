@@ -36,6 +36,7 @@ class AzureDeployment(models.Model):
 class ValueMapping(models.Model):
     attack_name = models.CharField(max_length=255)  # Stores the name of the attack
     probes_name = models.CharField(max_length=500)  # Stores the name of the probe
+    category_matrix = models.CharField(max_length=255)  # Stores the name of the category
 
     def __str__(self):
         return f"{self.attack_name} -> {self.probes_name}"
