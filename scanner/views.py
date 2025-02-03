@@ -169,7 +169,7 @@ def scanstarter_openai(request):
         else:
             messages.error(request, "No attacks were selected.")
         
-        return redirect('report:report')  #Need to change later
+        return redirect('report:lab_option')  #Need to change later
 
     return render(request, 'scanner/scanstarteropenai.html', {'attack_options': attack_options})
 
@@ -296,7 +296,7 @@ def scanstarter_azure(request):
         else:
             messages.error(request, "No attacks were selected.")
         
-        return redirect('report:report')
+        return redirect('report:lab_option')
 
     return render(request, 'scanner/scanstarterazure.html', {'attack_options': attack_options})
 

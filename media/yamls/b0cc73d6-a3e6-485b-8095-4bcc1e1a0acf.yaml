@@ -1,0 +1,35 @@
+plugins:
+  buff_max: null
+  buff_spec: null
+  buffs: {}
+  buffs_include_original_prompt: false
+  detector_spec: auto
+  detectors: {}
+  extended_detectors: false
+  generators: {}
+  harnesses: {}
+  model_name: null
+  model_type: null
+  probe_spec: dan.AntiDAN,dan.AutoDANCached,dan.ChatGPT_Developer_Mode_RANTI,dan.ChatGPT_Developer_Mode_v2,dan.ChatGPT_Image_Markdown,dan.DAN_Jailbreak,dan.DUDE,dan.DanInTheWildMini,dan.Dan_10_0,dan.Dan_11_0,dan.Dan_6_0,dan.Dan_6_2,dan.Dan_7_0,dan.Dan_8_0,dan.Dan_9_0,d
+  probes:
+    encoding:
+      payloads:
+      - default
+reporting:
+  report_dir: C:\\Users\\Utkarsh\\Downloads\\AIToolSuite\\media\\yamls
+  report_prefix: b0cc73d6-a3e6-485b-8095-4bcc1e1a0acf
+  show_100_pass_modules: true
+  taxonomy: null
+run:
+  deprefix: true
+  eval_threshold: 0.5
+  generations: 5
+  probe_tags: null
+  seed: null
+system:
+  lite: true
+  narrow_output: false
+  parallel_attempts: false
+  parallel_requests: false
+  show_z: false
+  verbose: 0

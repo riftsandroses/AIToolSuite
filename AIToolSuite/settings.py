@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'tres',
     'scanner',
     'report',
+    'bootstrap5',
 ]
 
 MIDDLEWARE = [
