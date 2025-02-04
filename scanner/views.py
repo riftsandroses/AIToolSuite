@@ -2,11 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import OpenAIIntegrationForm, AzureDeploymentForm
-from .models import OpenAIIntegration, AzureDeployment, ValueMapping, Hitlog
+from .models import OpenAIIntegration, AzureDeployment, ValueMapping
 import os
 import yaml
-import time
-import json
 import subprocess
 import uuid
 from django.conf import settings
@@ -315,11 +313,6 @@ def execute_garak_scan_openai(integration):
         # Build paths for YAML file and output JSONL
         yaml_path = os.path.join(settings.MEDIA_ROOT, 'yamls', integration.yaml_name)
 
-        # Remove ".yaml" to get the base name for the hitlog file
-        yaml_base_name = os.path.splitext(integration.yaml_name)[0]
-        hitlog_filename = f"{yaml_base_name}.hitlog.jsonl"
-        hitlog_filepath = os.path.join(settings.MEDIA_ROOT, "yamls", hitlog_filename)
-
         # Build the garak command
         command = [
             "garak",
@@ -330,18 +323,6 @@ def execute_garak_scan_openai(integration):
 
         # Run asynchronously
         process = subprocess.Popen(command)
-    
-        # Polling for process completion (non-blocking)
-        while True:
-            # Check if the process is still running
-            retcode = process.poll()
-            if retcode is not None:
-                # Process has finished
-                break
-            time.sleep(1)  # Sleep for 1 second before checking again
-
-        if os.path.exists(hitlog_filepath):
-            save_hitlog_data(integration.user, hitlog_filename, hitlog_filepath)
         
         return f"Scan completed successfully."
     except Exception as e:
@@ -361,10 +342,6 @@ def execute_garak_scan_azure(deployment):
         # Build paths for YAML file and output JSONL
         yaml_path = os.path.join(settings.MEDIA_ROOT, 'yamls', deployment.yaml_name)
 
-        yaml_base_name = os.path.splitext(deployment.yaml_name)[0]
-        hitlog_filename = f"{yaml_base_name}.hitlog.jsonl"
-        hitlog_filepath = os.path.join(settings.MEDIA_ROOT, "yamls", hitlog_filename)
-
         # Build the garak command
         command = [
             "garak",
@@ -376,50 +353,6 @@ def execute_garak_scan_azure(deployment):
         # Run asynchronously
         process = subprocess.Popen(command)
 
-        # Polling for process completion (non-blocking)
-        while True:
-            # Check if the process is still running
-            retcode = process.poll()
-            if retcode is not None:
-                # Process has finished
-                break
-            time.sleep(1)  # Sleep for 1 second before checking again
-
-        # After process ends, process the JSONL file
-        if os.path.exists(hitlog_filepath):
-            save_hitlog_data(deployment.user, hitlog_filename, hitlog_filepath)
-
         return f"Scan completed successfully."
     except Exception as e:
         raise Exception(f"Error during scan execution: {e}")
-
-
-def save_hitlog_data(user, hitlog_filename, hitlog_filepath):
-    """
-    Reads the JSONL file and saves the data into the Hitlog model.
-    """
-    try:
-        with open(hitlog_filepath, 'r') as file:
-            for line in file:
-                data = json.loads(line)
-
-                Hitlog.objects.create(
-                    user=user,
-                    hitlog_file=hitlog_filename,
-                    goal=data.get("goal", ""),
-                    prompt=data.get("prompt", ""),
-                    output=data.get("output", ""),
-                    trigger=data.get("trigger", ""),
-                    score=data.get("score", None),
-                    run_id=data.get("run_id", ""),
-                    attempt_id=data.get("attempt_id", ""),
-                    attempt_seq=data.get("attempt_seq", 0),
-                    attempt_idx=data.get("attempt_idx", 0),
-                    generator=data.get("generator", ""),
-                    probe=data.get("probe", ""),
-                    detector=data.get("detector", ""),
-                    generations_per_prompt=data.get("generations_per_prompt", 0),
-                )
-
-    except Exception as e:
-        raise Exception(f"Error processing hitlog file: {e}")
