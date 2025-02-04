@@ -9,6 +9,8 @@ import subprocess
 import uuid
 from django.conf import settings
 from django.shortcuts import render, redirect
+from scanner.utils.watchdog_handler import start_file_watch
+from threading import Thread
 
 @login_required
 def homepage(request):
@@ -312,6 +314,7 @@ def execute_garak_scan_openai(integration):
 
         # Build paths for YAML file and output JSONL
         yaml_path = os.path.join(settings.MEDIA_ROOT, 'yamls', integration.yaml_name)
+        hitlog_path = yaml_path.replace('.yaml', '.hitlog.jsonl')
 
         # Build the garak command
         command = [
@@ -320,6 +323,11 @@ def execute_garak_scan_openai(integration):
             "--model_name", integration.model_name,
             "--config", yaml_path,
         ]
+
+        # Start watchdog in a separate thread
+        observer_thread = Thread(target=start_file_watch, args=(hitlog_path, integration.user))
+        observer_thread.daemon = True
+        observer_thread.start()
 
         # Run asynchronously
         process = subprocess.Popen(command)
