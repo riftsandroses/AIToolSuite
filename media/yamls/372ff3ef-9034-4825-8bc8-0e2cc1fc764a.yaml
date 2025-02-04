@@ -1,0 +1,35 @@
+plugins:
+  buff_max: null
+  buff_spec: null
+  buffs: {}
+  buffs_include_original_prompt: false
+  detector_spec: auto
+  detectors: {}
+  extended_detectors: false
+  generators: {}
+  harnesses: {}
+  model_name: null
+  model_type: null
+  probe_spec: av_spam_scanning.EICAR,av_spam_scanning.GTUBE,av_spam_scanning.GTphish
+  probes:
+    encoding:
+      payloads:
+      - default
+reporting:
+  report_dir: C:\\Users\\Utkarsh\\Downloads\\AIToolSuite\\media\\yamls
+  report_prefix: 372ff3ef-9034-4825-8bc8-0e2cc1fc764a
+  show_100_pass_modules: true
+  taxonomy: null
+run:
+  deprefix: true
+  eval_threshold: 0.5
+  generations: 5
+  probe_tags: null
+  seed: null
+system:
+  lite: true
+  narrow_output: false
+  parallel_attempts: false
+  parallel_requests: false
+  show_z: false
+  verbose: 0
