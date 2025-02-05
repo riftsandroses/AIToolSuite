@@ -9,6 +9,8 @@ import subprocess
 import uuid
 from django.conf import settings
 from django.shortcuts import render, redirect
+from scanner.utils.watchdog_handler import start_file_watch
+from threading import Thread
 
 @login_required
 def homepage(request):
@@ -22,7 +24,8 @@ def openai_integration(request):
             integration = form.save(commit=False)
             integration.user = request.user
             integration.save()
-            messages.success(request, "Data saved successfully!")
+            messages.success(request, "OpenAI Integration data saved successfully!")
+
             return redirect('scanner:scanstarter_openai')
     else:
         form = OpenAIIntegrationForm()
@@ -38,6 +41,7 @@ def azure_deployment(request):
             deployment.user = request.user
             deployment.save()
             messages.success(request, "Azure Deployment data saved successfully!")
+
             return redirect('scanner:scanstarter_azure')
     else:
         form = AzureDeploymentForm()
@@ -169,7 +173,7 @@ def scanstarter_openai(request):
         else:
             messages.error(request, "No attacks were selected.")
         
-        return redirect('report:report')  #Need to change later
+        return redirect('report:lab_option')  #Need to change later
 
     return render(request, 'scanner/scanstarteropenai.html', {'attack_options': attack_options})
 
@@ -296,7 +300,7 @@ def scanstarter_azure(request):
         else:
             messages.error(request, "No attacks were selected.")
         
-        return redirect('report:report')
+        return redirect('report:lab_option')
 
     return render(request, 'scanner/scanstarterazure.html', {'attack_options': attack_options})
 
@@ -310,6 +314,7 @@ def execute_garak_scan_openai(integration):
 
         # Build paths for YAML file and output JSONL
         yaml_path = os.path.join(settings.MEDIA_ROOT, 'yamls', integration.yaml_name)
+        hitlog_path = yaml_path.replace('.yaml', '.hitlog.jsonl')
 
         # Build the garak command
         command = [
@@ -319,9 +324,14 @@ def execute_garak_scan_openai(integration):
             "--config", yaml_path,
         ]
 
-        # Execute the command
-        subprocess.run(command, check=True)
+        # Start watchdog in a separate thread
+        observer_thread = Thread(target=start_file_watch, args=(hitlog_path, integration.user))
+        observer_thread.daemon = True
+        observer_thread.start()
 
+        # Run asynchronously
+        process = subprocess.Popen(command)
+        
         return f"Scan completed successfully."
     except Exception as e:
         raise Exception(f"Error during scan execution: {e}")
@@ -348,8 +358,8 @@ def execute_garak_scan_azure(deployment):
             "--config", yaml_path,
         ]
 
-        # Execute the command
-        subprocess.run(command, check=True)
+        # Run asynchronously
+        process = subprocess.Popen(command)
 
         return f"Scan completed successfully."
     except Exception as e:

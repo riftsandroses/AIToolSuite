@@ -1,8 +1,10 @@
 from django.shortcuts import render
 
-def report(request):
-    return render(request, 'report/report.html')
+def lab_option(request):
+    return render(request, 'report/lab_option.html')
 
-def table(request):
-    # This view will render the table.html page
-    return render(request, 'report/table.html')
+def ai_option(request):
+    return render(request, 'report/ai_option.html')
+
+def llm_scanner_report(request):
+    return render(request, 'report/llm_scanner_report.html')
