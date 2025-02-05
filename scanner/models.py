@@ -46,6 +46,7 @@ from django.contrib.auth.models import User
 
 class ScanResult(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the user who initiated the scan
+    report_name = models.TextField(null=False, blank=False)
     goal = models.TextField(null=True, blank=True)
     prompt = models.TextField()
     output = models.TextField()

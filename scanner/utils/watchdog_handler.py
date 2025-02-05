@@ -1,6 +1,7 @@
 import os
 import time
 import json
+from pathlib import Path
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from django.utils.timezone import now
@@ -49,9 +50,11 @@ class JSONLFileHandler(FileSystemEventHandler):
             for line in file:
                 try:
                     data = json.loads(line.strip())
+                    file_name = Path(self.file_path).name
 
                     # Insert into database
                     ScanResult.objects.create(
+                        report_name=file_name,
                         user=self.user,
                         goal=data.get("goal", ""),
                         prompt=data.get("prompt", ""),
