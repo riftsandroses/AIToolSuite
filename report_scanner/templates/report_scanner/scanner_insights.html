@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Scanner Insights - {{ report_name }}</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js" defer></script>
     <style>
         table {
             width: 100%;
@@ -19,6 +20,8 @@
 <body>
     <h2>Scanner Insights for: {{ report_name }}</h2>
     
+    <div id="plotly-chart"></div>
+
     <table>
         <thead>
             <tr>
@@ -54,5 +57,22 @@
 
     <br>
     <a href="{% url 'report_scanner:report_list' %}">Back to Report List</a>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DEBUG: Checking if Plotly is loaded...", window.Plotly);
+            if (typeof Plotly === "undefined") {
+                console.error("❌ Plotly is not loaded!");
+                return;
+            }
+
+            // Debugging: Print JSON in console
+            console.log("DEBUG: Graph JSON Data:", {{ graph_json|safe }});
+
+            var graphData = {{ graph_json|safe }};  // Load JSON data safely
+            Plotly.newPlot('plotly-chart', graphData.data, graphData.layout);
+        });
+    </script>
+
 </body>
 </html>
