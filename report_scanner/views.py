@@ -80,6 +80,8 @@ def scanner_insights(request, yaml_name):
             font=dict(color="white")
         )
 
+        fig2.update_traces(textinfo="label+percent", hoverinfo="label+value")
+
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     graph_json2 = json.dumps(fig2, cls=plotly.utils.PlotlyJSONEncoder)
