@@ -1,27 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scanner Insights - {{ report_name }}</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js" defer></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: white;
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .chart-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #333;
         }
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #555;
+        }
+        th {
+            background-color: #444;
+            color: white;
+        }
+        td {
+            color: white;
         }
         th, td {
             padding: 10px;
             text-align: left;
         }
+        .btn-back {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <h2>Scanner Insights for: {{ report_name }}</h2>
-    
-    <div id="plotly-chart"></div>
 
+    <h2>Scanner Insights for: {{ report_name }}</h2>
+
+    <!-- Findings Over Time Graph -->
+    <div class="chart-container">
+        <h3>Findings Over Time</h3>
+        <div id="plotly-chart"></div>
+    </div>
+
+    <!-- Attack Name vs Probe Stacked Bar Graph -->
+    <div class="chart-container">
+        <h3>Attack Category vs Occurrences</h3>
+        <div id="chart2"></div>
+    </div>
+
+    <!-- Scan Results Table -->
     <table>
         <thead>
             <tr>
@@ -38,7 +86,7 @@
         <tbody>
             {% for result in scan_results %}
             <tr>
-                <td>{{ forloop.counter }}</td>  <!-- Auto-populated serial number -->
+                <td>{{ forloop.counter }}</td>
                 <td>{{ result.goal }}</td>
                 <td>{{ result.prompt }}</td>
                 <td>{{ result.output }}</td>
@@ -55,24 +103,52 @@
         </tbody>
     </table>
 
+    <!-- Back Button -->
     <br>
-    <a href="{% url 'report_scanner:report_list' %}">Back to Report List</a>
+    <a href="{% url 'report_scanner:report_list' %}" class="btn-back">Back to Report List</a>
+
+    <div id="plotly-chart"></div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             console.log("DEBUG: Checking if Plotly is loaded...", window.Plotly);
             if (typeof Plotly === "undefined") {
-                console.error("❌ Plotly is not loaded!");
+                console.error(" Plotly is not loaded!");
                 return;
             }
-
-            // Debugging: Print JSON in console
-            console.log("DEBUG: Graph JSON Data:", {{ graph_json|safe }});
-
-            var graphData = {{ graph_json|safe }};  // Load JSON data safely
-            Plotly.newPlot('plotly-chart', graphData.data, graphData.layout);
+    
+            // Render First Graph (Line Chart)
+            try {
+                var graphData1 = JSON.parse(`{{ graph_json|escapejs|safe }}`);
+                console.log("DEBUG: Graph 1 JSON Data:", graphData1);
+    
+                if (graphData1.data && graphData1.layout) {
+                    Plotly.newPlot('plotly-chart', graphData1.data, graphData1.layout);
+                } else {
+                    console.error("ERROR: Invalid data format in graph_json!");
+                }
+            } catch (error) {
+                console.error("ERROR parsing graph_json:", error);
+            }
+    
+            // Render Second Graph (Circle Chart)
+            try {
+                var graphData2 = JSON.parse(`{{ graph_json2|escapejs|safe }}`);
+                console.log("DEBUG: Graph 2 JSON Data:", graphData2);
+    
+                if (graphData2.data && graphData2.layout) {
+                    Plotly.newPlot('chart2', graphData2.data, graphData2.layout);
+                } else {
+                    console.error("ERROR: Invalid data format in graph_json2!");
+                }
+            } catch (error) {
+                console.error("ERROR parsing graph_json2:", error);
+            }
         });
     </script>
+    
+
+        
 
 </body>
 </html>
