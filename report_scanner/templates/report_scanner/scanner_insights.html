@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scanner Insights - {{ report_name }}</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>Scanner Insights for: {{ report_name }}</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Goal</th>
+                <th>Prompt</th>
+                <th>Output</th>
+                <th>Attempt ID</th>
+                <th>Generator</th>
+                <th>Probe</th>
+                <th>Generations per Prompt</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in scan_results %}
+            <tr>
+                <td>{{ forloop.counter }}</td>  <!-- Auto-populated serial number -->
+                <td>{{ result.goal }}</td>
+                <td>{{ result.prompt }}</td>
+                <td>{{ result.output }}</td>
+                <td>{{ result.attempt_id }}</td>
+                <td>{{ result.generator }}</td>
+                <td>{{ result.probe }}</td>
+                <td>{{ result.generations_per_prompt }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No scan results found for this report.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <a href="{% url 'report_scanner:report_list' %}">Back to Report List</a>
+</body>
+</html>

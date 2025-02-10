@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LLM Vulnerability Scanner History</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>LLM Vulnerability Scanner History</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Scan Name</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Model Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for scan in scans %}
+            <tr>
+                <td>{{ forloop.counter }}</td>  <!-- Auto-populated serial number -->
+                <td>{{ scan.scan_name }}</td>
+                <td>{{ scan.created_at }}</td>
+                <td>{{ scan.description }}</td>
+                <td>{{ scan.model_name }}</td>
+                <td>
+                    <a href="{% url 'report_scanner:scanner_insights' scan.yaml_name %}">View</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No scans available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
