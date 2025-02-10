@@ -3,8 +3,10 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #121212; /* Dark background for contrast */
-    color: #E0E0E0; /* Light text color */
+    background-color: #121212;
+    /* Dark background for contrast */
+    color: #E0E0E0;
+    /* Light text color */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,7 +18,8 @@ body {
 /* Header Styles */
 h1 {
     font-size: 3rem;
-    color: #FFFFFF; /* White color for the main heading */
+    color: #FFFFFF;
+    /* White color for the main heading */
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 30px;
@@ -24,7 +27,7 @@ h1 {
 
 /* Form Styles */
 form {
-    background-color: #1F1F1F; /* Slightly lighter background for the form */
+    background-color: #1F1F1F; 
     padding: 20px 30px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -42,27 +45,33 @@ form label {
     display: block;
     font-size: 14px;
     margin-bottom: 5px;
-    color: #B0BEC5; /* Light gray label color */
+    color: #B0BEC5;
+    /* Light gray label color */
 }
 
 form input {
-    width: 100%;
+    /* width: 50%; */
     padding: 10px;
     font-size: 16px;
-    color: #121212; /* Dark text for inputs */
-    border: 1px solid #B0BEC5; /* Light gray border */
+    color: #121212;
+    /* Dark text for inputs */
+    border: 1px solid #B0BEC5;
+    /* Light gray border */
     border-radius: 5px;
     outline: none;
     transition: border-color 0.3s ease;
 }
 
 form input:focus {
-    border-color: #FF4081; /* Accent color for focus effect */
+    border-color: #FF4081;
+    /* Accent color for focus effect */
 }
 
 form button {
-    background-color: #FF4081; /* Accent color for the button */
-    color: #FFFFFF; /* White text for the button */
+    background-color: #FF4081;
+    /* Accent color for the button */
+    color: #FFFFFF;
+    /* White text for the button */
     border: none;
     padding: 10px 20px;
     font-size: 16px;
@@ -74,27 +83,34 @@ form button {
 }
 
 form button:hover {
-    background-color: #E91E63; /* Slightly darker hover effect */
-    transform: scale(1.05); /* Subtle zoom-in effect */
+    background-color: #E91E63;
+    /* Slightly darker hover effect */
+    transform: scale(1.05);
+    /* Subtle zoom-in effect */
 }
 
 /* Link Styles */
 a {
     display: inline-block;
-    color: #B0BEC5; /* Light gray color for links */
+    color: #B0BEC5;
+    /* Light gray color for links */
     text-decoration: none;
     font-size: 16px;
     margin-top: 20px;
     padding: 8px 15px;
-    border: 2px solid #B0BEC5; /* Border matching link color */
+    border: 2px solid #B0BEC5;
+    /* Border matching link color */
     border-radius: 5px;
     transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
 a:hover {
-    color: #FFFFFF; /* White text on hover */
-    background-color: #FF4081; /* Accent color for hover effect */
-    border-color: #FF4081; /* Match border with hover effect */
+    color: #FFFFFF;
+    /* White text on hover */
+    background-color: #FF4081;
+    /* Accent color for hover effect */
+    border-color: #FF4081;
+    /* Match border with hover effect */
 }
 
 /* Responsive Adjustments */
@@ -117,4 +133,14 @@ a:hover {
         font-size: 14px;
         padding: 6px 12px;
     }
+}
+
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    background: #1F1F1F;
+    width: 25rem;
 }
