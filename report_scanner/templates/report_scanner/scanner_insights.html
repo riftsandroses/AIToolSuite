@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner Insights - {{ report_name }}</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: white;
+            margin: 20px;
+        }
+        h2, h1 {
+            text-align: center;
+        }
+        .charts-wrapper {
+            display: flex;
+            justify-content: space-between; /* Ensures graphs are spaced properly */
+            gap: 20px; /* Space between graphs */
+            flex-wrap: wrap; /* Wrap on smaller screens */
+        }
+        .chart-container {
+            flex: 1;
+            min-width: 45%; /* Ensures responsiveness */
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #333;
+        }
+        table, th, td {
+            border: 1px solid #555;
+        }
+        th {
+            background-color: #444;
+            color: white;
+        }
+        td {
+            color: white;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .btn-back {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
+        .btn-download {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            float: right;
+        }
+        .btn-download:hover {
+            background-color: #0056b3;
+            float: right;
+        }
+        .cards-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: #cb4126;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 230px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .card:hover {
+            background-color: #a01414;
+        }
+        .card.no-issues {
+            background-color: #007bff;
+        }
+        .card.no-issues:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Overview of {{ report_name }}</h1>
+    <br>
+    <br>
+    <!-- Evaluation Summary Cards -->
+    <div class="cards-container">
+        {% for category, status in category_status.items %}
+            <div class="card {% if status == 'No Issues Found' %}no-issues{% endif %}" 
+                {% if status == 'Potential Issues Found >' %} 
+                    onclick="window.location.href='/category_details/{{ category }}/'" 
+                {% endif %}>
+                <h3>{{ category }}</h3>
+                <p>{{ status }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <br>
+
+    <h2>Graphical Analytics & Insights</h2>
+
+    <!-- Graphs Container -->
+    <div class="charts-wrapper">
+        <!-- Findings Over Time Graph -->
+        <div class="chart-container">
+            <h3>Findings Over Time</h3>
+            <div id="plotly-chart"></div>
+        </div>
+
+        <!-- Attack Name vs Probe Stacked Bar Graph -->
+        <div class="chart-container">
+            <h3>Attack Type vs Occurrences</h3>
+            <div id="chart2"></div>
+        </div>
+    </div>
+
+    <br>
+
+    <h2>Tabular Report of Findings</h2>    
+
+    <a href="{% url 'report_scanner:report_list' %}" class="btn-back">Back to Report List</a>
+
+    <a href="#" id="download-excel" class="btn-download">Download Excel</a>
+
+    <br>
+    <!-- Scan Results Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Goal</th>
+                <th>Prompt</th>
+                <th>Output</th>
+                <th>Attempt ID</th>
+                <th>Generator</th>
+                <th>Probe</th>
+                <th>Generations per Prompt</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in scan_results %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ result.goal }}</td>
+                <td>{{ result.prompt }}</td>
+                <td>{{ result.output }}</td>
+                <td>{{ result.attempt_id }}</td>
+                <td>{{ result.generator }}</td>
+                <td>{{ result.probe }}</td>
+                <td>{{ result.generations_per_prompt }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No scan results found for this report.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DEBUG: Checking if Plotly is loaded...", window.Plotly);
+            if (typeof Plotly === "undefined") {
+                console.error("Plotly is not loaded!");
+                return;
+            }
+
+            // Render First Graph (Line Chart)
+            try {
+                var graphData1 = JSON.parse(`{{ graph_json|escapejs|safe }}`);
+                console.log("DEBUG: Graph 1 JSON Data:", graphData1);
+
+                if (graphData1.data && graphData1.layout) {
+                    Plotly.newPlot('plotly-chart', graphData1.data, graphData1.layout);
+                } else {
+                    console.error("ERROR: Invalid data format in graph_json!");
+                }
+            } catch (error) {
+                console.error("ERROR parsing graph_json:", error);
+            }
+
+            // Render Second Graph (Pie Chart or Bar Graph)
+            try {
+                var graphData2 = JSON.parse(`{{ graph_json2|escapejs|safe }}`);
+                console.log("DEBUG: Graph 2 JSON Data:", graphData2);
+
+                if (graphData2.data && graphData2.layout) {
+                    Plotly.newPlot('chart2', graphData2.data, graphData2.layout);
+                } else {
+                    console.error("ERROR: Invalid data format in graph_json2!");
+                }
+            } catch (error) {
+                console.error("ERROR parsing graph_json2:", error);
+            }
+        });
+
+        document.getElementById("download-excel").addEventListener("click", function () {
+            let table = document.querySelector("table"); // Select table
+            let ws = XLSX.utils.table_to_sheet(table); // Convert table to worksheet
+            let wb = XLSX.utils.book_new(); // Create a new workbook
+            XLSX.utils.book_append_sheet(wb, ws, "Scan Results"); // Add sheet to workbook
+
+            // Trigger file download
+            XLSX.writeFile(wb, "scan_results.xlsx");
+        });
+    </script>
+
+</body>
+</html>

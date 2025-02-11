@@ -304,6 +304,7 @@ def scanstarter_azure(request):
 
     return render(request, 'scanner/scanstarterazure.html', {'attack_options': attack_options})
 
+@login_required
 def execute_garak_scan_openai(integration):
     """
     Function to execute the garak scan using the latest OpenAIIntegration instance.
@@ -336,7 +337,7 @@ def execute_garak_scan_openai(integration):
     except Exception as e:
         raise Exception(f"Error during scan execution: {e}")
     
-
+@login_required
 def execute_garak_scan_azure(deployment):
     """
     Function to execute the garak scan using the latest OpenAIIntegration instance.
