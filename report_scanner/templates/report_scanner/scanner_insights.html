@@ -15,8 +15,15 @@
         h2 {
             text-align: center;
         }
+        .charts-wrapper {
+            display: flex;
+            justify-content: space-between; /* Ensures graphs are spaced properly */
+            gap: 20px; /* Space between graphs */
+            flex-wrap: wrap; /* Wrap on smaller screens */
+        }
         .chart-container {
-            margin-bottom: 30px;
+            flex: 1;
+            min-width: 45%; /* Ensures responsiveness */
             text-align: center;
         }
         table {
@@ -55,20 +62,34 @@
 </head>
 <body>
 
-    <h2>Scanner Insights for: {{ report_name }}</h2>
+    <h2>Overview of {{ report_name }}</h2>
+    <br>
+    <br>
 
-    <!-- Findings Over Time Graph -->
-    <div class="chart-container">
-        <h3>Findings Over Time</h3>
-        <div id="plotly-chart"></div>
+    <h2>Graphical Analytics & Insights</h2>
+
+    <!-- Graphs Container -->
+    <div class="charts-wrapper">
+        <!-- Findings Over Time Graph -->
+        <div class="chart-container">
+            <h3>Findings Over Time</h3>
+            <div id="plotly-chart"></div>
+        </div>
+
+        <!-- Attack Name vs Probe Stacked Bar Graph -->
+        <div class="chart-container">
+            <h3>Attack Type vs Occurrences</h3>
+            <div id="chart2"></div>
+        </div>
     </div>
 
-    <!-- Attack Name vs Probe Stacked Bar Graph -->
-    <div class="chart-container">
-        <h3>Attack Type vs Occurrences</h3>
-        <div id="chart2"></div>
-    </div>
+    <br>
+    <br>
 
+    <h2>Tabular Report of Findings</h2>    
+
+    <a href="{% url 'report_scanner:report_list' %}" class="btn-back">Back to Report List</a>
+    <br>
     <!-- Scan Results Table -->
     <table>
         <thead>
@@ -103,25 +124,19 @@
         </tbody>
     </table>
 
-    <!-- Back Button -->
-    <br>
-    <a href="{% url 'report_scanner:report_list' %}" class="btn-back">Back to Report List</a>
-
-    <div id="plotly-chart"></div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             console.log("DEBUG: Checking if Plotly is loaded...", window.Plotly);
             if (typeof Plotly === "undefined") {
-                console.error(" Plotly is not loaded!");
+                console.error("Plotly is not loaded!");
                 return;
             }
-    
+
             // Render First Graph (Line Chart)
             try {
                 var graphData1 = JSON.parse(`{{ graph_json|escapejs|safe }}`);
                 console.log("DEBUG: Graph 1 JSON Data:", graphData1);
-    
+
                 if (graphData1.data && graphData1.layout) {
                     Plotly.newPlot('plotly-chart', graphData1.data, graphData1.layout);
                 } else {
@@ -130,12 +145,12 @@
             } catch (error) {
                 console.error("ERROR parsing graph_json:", error);
             }
-    
-            // Render Second Graph (Circle Chart)
+
+            // Render Second Graph (Pie Chart or Bar Graph)
             try {
                 var graphData2 = JSON.parse(`{{ graph_json2|escapejs|safe }}`);
                 console.log("DEBUG: Graph 2 JSON Data:", graphData2);
-    
+
                 if (graphData2.data && graphData2.layout) {
                     Plotly.newPlot('chart2', graphData2.data, graphData2.layout);
                 } else {
@@ -146,9 +161,6 @@
             }
         });
     </script>
-    
-
-        
 
 </body>
 </html>

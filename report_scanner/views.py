@@ -80,7 +80,16 @@ def scanner_insights(request, yaml_name):
             font=dict(color="white")
         )
 
-        fig2.update_traces(textinfo="label+percent", hoverinfo="label+value")
+        customdata = [entry["Count"] for entry in data]
+        total_count = sum(customdata)
+
+        fig2.update_traces( textinfo="label+percent", 
+                            hovertemplate=  "No. of sub-categories: %{value}<br>"
+                                            "No. of findings per sub-category: %{customdata}<br>"
+                                            "Total count of Findings: " + str(total_count) + "<br>"  # Convert total_count to string
+                                            "Percentage: %{percent}",
+                            customdata=[[entry["Count"]] for entry in data],
+        )
 
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
