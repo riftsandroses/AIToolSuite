@@ -23,6 +23,7 @@ urlpatterns = [
     path('homepage/', include('homepage.urls')),  # Include the homepage app URLs
     path('tres/', include('tres.urls')),  # Include the tres app URLs
     path('scanner/', include('scanner.urls')),  # Include the scanner app URLs
-    path('report/', include('report.urls'))  # Include the report app URLs
+    path('report/', include('report.urls')),  # Include the report app URLs
+    path('report_scanner/', include('report_scanner.urls')),  # Include the report_scanner URLs
 ]
 

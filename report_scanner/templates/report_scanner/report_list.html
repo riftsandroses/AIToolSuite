@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>LLM Vulnerability Scanner History</title>
+    <link rel="stylesheet" crossorigin href="{% static 'homepage/css/app.css' %}">
+  <link rel="stylesheet" crossorigin href="{% static 'homepage/css/app-dark.css' %}">
+    <link rel="stylesheet" crossorigin href="{% static 'homepage/css/iconly.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: white;
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: white;
+        }
+        .charts-wrapper {
+            display: flex;
+            justify-content: space-between; /* Ensures graphs are spaced properly */
+            gap: 20px; /* Space between graphs */
+            flex-wrap: wrap; /* Wrap on smaller screens */
+        }
+        .chart-container {
+            flex: 1;
+            min-width: 45%; /* Ensures responsiveness */
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #333;
+        }
+        table, th, td {
+            border: 1px solid #555;
+        }
+        th {
+            background-color: #444;
+            color: white;
+        }
+        td {
+            color: white;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <h2>LLM Vulnerability Scanner History</h2>
+    <br>
+    <script src="{% static 'homepage/js/initTheme.js' %}"></script>
+    <div id="app">
+        <div id="main" class="layout-horizontal">
+            <header class="mb-5">
+                <nav class="main-navbar">
+                    <div class="container">
+                        <ul>
+                            
+                            <li
+                                class="menu-item  ">
+                                <a href="#" class='menu-link'>
+                                    <span><i class="bi bi-grid-fill"></i> Homepage</span>
+                                </a>
+                            </li>
+                            
+                            
+                            
+                            <li
+                                class="menu-item  has-sub">
+                                <a href="#" class='menu-link'>
+                                    <span><i class="bi bi-stack"></i> Framework Analysis Lab</span>
+                                </a>
+                            </li>
+                            
+                            
+                            
+                            <li
+                                class="menu-item active has-sub">
+                                <a href="#" class='menu-link'>
+                                    <span><i class="bi bi-grid-1x2-fill"></i> Threat Modeling Lab</span>
+                                </a>
+                            </li>
+                            
+                            
+                            
+                            <li
+                                class="menu-item  has-sub">
+                                <a href="{% url 'tres' %}" class='menu-link'>
+                                    <span><i class="bi bi-file-earmark-medical-fill"></i> AI Attack Lab</span>
+                                </a>
+                                <div
+                                    class="submenu ">
+                                    <!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
+                                    <div class="submenu-group-wrapper">
+                                        
+                                        
+                                        <ul class="submenu-group">
+                                            
+                                            <li
+                                                class="submenu-item  has-sub">
+                                                <a href="{% url 'llmtool' %}"
+                                                    class='submenu-link'>LLM Attack Suite</a>
+
+                                                
+                                                <!-- 3 Level Submenu -->
+                                                <ul class="subsubmenu">
+                                                    
+                                                    <li class="subsubmenu-item ">
+                                                        <a href="{% url 'scanner:homepage' %}" class="subsubmenu-link">LLM Vulnerability Scanner</a>
+                                                    </li>
+                                                    
+                                                    <li class="subsubmenu-item ">
+                                                        <a href="#" class="subsubmenu-link">Prompt Attack Automation</a>
+                                                    </li>
+                                                    
+                                                    <li class="subsubmenu-item ">
+                                                        <a href="#" class="subsubmenu-link">Adversarial Attack Testing</a>
+                                                    </li>
+                                                    
+                                                </ul>
+                                                
+                                            </li>
+                                            
+                                        
+                                        
+                                            <li
+                                                class="submenu-item  ">
+                                                <a href="#"
+                                                    class='submenu-link'>ML Model Suite</a>
+
+                                                
+                                            </li>
+                                            
+                                        </ul>
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            
+                            
+                            <li
+                                class="menu-item  has-sub">
+                                <a href="#" class='menu-link'>
+                                    <span><i class="bi bi-table"></i> Remediation Lab</span>
+                                </a>
+                            </li>
+                            
+                            
+                            
+                            <li
+                                class="menu-item  has-sub">
+                                <a href="#" class='menu-link'>
+                                    <span><i class="bi bi-plus-square-fill"></i> Reports & Insights</span>
+                                </a>
+                                <div
+                                    class="submenu ">
+                                    <!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
+                                    <div class="submenu-group-wrapper">
+                                        
+                                        
+                                        <ul class="submenu-group">
+                                            
+                                            <li
+                                                class="submenu-item  has-sub">
+                                                <a href="#"
+                                                    class='submenu-link'>AI Attack Lab</a>
+
+                                                
+                                                <!-- 3 Level Submenu -->
+                                                <ul class="subsubmenu">
+                                                    
+                                                    <li class="subsubmenu-item ">
+                                                        <a href="{% url 'report_scanner:report_list' %}" class="subsubmenu-link">LLM Vulnerability Scanner</a>
+                                                    </li>
+                                                    
+                                                    <li class="subsubmenu-item ">
+                                                        <a href="#" class="subsubmenu-link">Prompt Attack Automation</a>
+                                                    </li>
+                                                    
+                                                    <li class="subsubmenu-item ">
+                                                        <a href="#" class="subsubmenu-link">Adversarial Attack Testing</a>
+                                                    </li>
+                                                    
+                                                </ul>
+                                                
+                                            </li>
+                                            
+                                        
+                                        
+                                            <li
+                                                class="submenu-item  has-sub">
+                                                <a href="#"
+                                                    class='submenu-link'>Framework Analysis Lab</a>
+                                                
+                                            </li>
+                                            
+                                        
+                                        
+                                            <li
+                                                class="submenu-item  has-sub">
+                                                <a href="#"
+                                                    class='submenu-link'>Threat Modeling Lab</a>
+                                                
+                                            </li>
+
+
+                                            <li
+                                                class="submenu-item  has-sub">
+                                                <a href="#"
+                                                    class='submenu-link'>Remediation Lab</a>
+                                                
+                                            </li>
+                                            
+                                        </ul>
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </nav>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Scan Name</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Model Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for scan in scans %}
+            <tr>
+                <td>{{ forloop.counter }}</td>  <!-- Auto-populated serial number -->
+                <td>{{ scan.scan_name }}</td>
+                <td>{{ scan.created_at }}</td>
+                <td>{{ scan.description }}</td>
+                <td>{{ scan.model_name }}</td>
+                <td>
+                    <a href="{% url 'report_scanner:scanner_insights' scan.yaml_name %}">View</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No scans available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
