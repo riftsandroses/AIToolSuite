@@ -1,0 +1,15 @@
+.nav-link{
+    display: flex !important;
+    /* justify-content: center;
+    align-items: center;
+    text-align: center; */
+}
+
+.icon{
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+}
+
+.footer-right{
+    display: flex;
+}

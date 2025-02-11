@@ -1,17 +1,75 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>OpenAI Integration</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'scanner/css/openai.css' %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'scanner/css/openai.css' %}" />
+  </head>
+  <body>
     <h1>OpenAI Integration</h1>
     <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Proceed</button>
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Proceed</button>
     </form>
     <a href="{% url 'scanner:homepage' %}">Back to Homepage</a>
-</body>
+
+    {% comment %} <div class="">
+      <form class="form-container">
+        <div class="">
+          <div class="form-group">
+            <label for="scan-name">Scan Name</label>
+            <input
+              type="text"
+              id="scan-name"
+              class="form-control"
+              name="scanName"
+              placeholder="Scan Name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input
+              type="email"
+              id="description"
+              class="form-control"
+              name="description"
+              placeholder="Description"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="model-name">Model Name</label>
+            <input
+              type="text"
+              id="model-name"
+              class="form-control"
+              name="modelName"
+              placeholder="Model Name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="api-key">API Key</label>
+            <input
+              type="password"
+              id="api-key"
+              class="form-control"
+              name="api-key"
+              placeholder="Open AI API Key"
+            />
+          </div>
+
+          <div class="col-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary me-1 mb-1">
+              Submit
+            </button>
+            <button type="reset" class="btn btn-light-secondary me-1 mb-1">
+              Reset
+            </button>
+          </div>
+        </div>
+      </form>
+    </div> {% endcomment %}
+  </body>
 </html>
