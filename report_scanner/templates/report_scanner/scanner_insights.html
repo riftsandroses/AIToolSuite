@@ -73,6 +73,31 @@
             background-color: #0056b3;
             float: right;
         }
+        .cards-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: #cb4126;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 230px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .card:hover {
+            background-color: #a01414;
+        }
+        .card.no-issues {
+            background-color: #007bff;
+        }
+        .card.no-issues:hover {
+            background-color: #0056b3;
+        }
 
     </style>
 </head>
@@ -80,6 +105,21 @@
 
     <h2>Overview of {{ report_name }}</h2>
     <br>
+    <br>
+
+    <!-- Evaluation Summary Cards -->
+    <div class="cards-container">
+        {% for category, status in category_status.items %}
+            <div class="card {% if status == 'No Issues Found' %}no-issues{% endif %}" 
+                {% if status == 'Potential Issues Found >' %} 
+                    onclick="window.location.href='/category_details/{{ category }}/'" 
+                {% endif %}>
+                <h3>{{ category }}</h3>
+                <p>{{ status }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
     <br>
 
     <h2>Graphical Analytics & Insights</h2>

@@ -23,7 +23,35 @@ def scanner_insights(request, yaml_name):
     report_name = f"{base_name}.hitlog.jsonl"
     scan_results = ScanResult.objects.filter(report_name=report_name)
 
-    # Aggregate findings count by time
+    # Define evaluation categories
+    categories = [
+        "Robustness Evaluation",
+        "Adversarial Resilience",
+        "Exploitation Resistance",
+        "Ethical Alignment",
+        "Hallucination Rate"
+    ]
+
+    category_status = {}
+
+    for category in categories:
+        # Get all ValueMappings for this category
+        value_mappings = ValueMapping.objects.filter(category_matrix=category)
+        
+        # Collect all probes associated with this category
+        category_probes = set()
+        for mapping in value_mappings:
+            category_probes.update(p.strip() for p in mapping.probes_name.split(','))
+
+        # Check if there is a match in scan results
+        matching_probes = scan_results.filter(probe__in=category_probes)
+
+        if matching_probes.exists():
+            category_status[category] = "Potential Issues Found"
+        else:
+            category_status[category] = "No Issues Found"
+
+    # Generate graphs
     findings_over_time = (
         scan_results
         .values('created_at__time')  
@@ -38,14 +66,9 @@ def scanner_insights(request, yaml_name):
     fig.update_layout(template="plotly_dark", paper_bgcolor="#1e1e1e", plot_bgcolor="#1e1e1e", font=dict(color="white"))
     fig.update_traces(mode="lines+markers", line=dict(color="blue"))  
 
-    # Get probe counts
-    probe_counts = (
-        scan_results
-        .values('probe')
-        .annotate(count=Cast(Count('id'), IntegerField()))
-    )
+    # Probe Analysis Pie Chart
+    probe_counts = scan_results.values('probe').annotate(count=Cast(Count('id'), IntegerField()))
 
-    # Create a probe-to-attack mapping dictionary
     probe_attack_mapping = {}
     all_mappings = ValueMapping.objects.values('probes_name', 'attack_name')
 
@@ -61,16 +84,14 @@ def scanner_insights(request, yaml_name):
         attack_name = probe_attack_mapping.get(probe, "Unknown")  
         data.append({"Attack Name": attack_name, "Count": count})
 
-    # Use a Pie Chart Instead of a Bar Chart
     if not data:
-        print("WARNING: No data available for Attack Name vs Probe graph.")
         fig2 = px.pie(title="No Data Available")
     else:
         fig2 = px.pie(
             names=[entry["Attack Name"] for entry in data],
             values=[entry["Count"] for entry in data],
             title="Attack Name Distribution",
-            hole=0.4  # Optional: Make it a donut chart
+            hole=0.4
         )
 
         fig2.update_layout(
@@ -80,24 +101,15 @@ def scanner_insights(request, yaml_name):
             font=dict(color="white")
         )
 
-        customdata = [entry["Count"] for entry in data]
-        total_count = sum(customdata)
-
-        fig2.update_traces( textinfo="label+percent", 
-                            hovertemplate=  "No. of sub-categories: %{value}<br>"
-                                            "No. of findings per sub-category: %{customdata}<br>"
-                                            "Total count of Findings: " + str(total_count) + "<br>"  # Convert total_count to string
-                                            "Percentage: %{percent}",
-                            customdata=[[entry["Count"]] for entry in data],
-        )
+        fig2.update_traces(textinfo="label+percent")
 
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
     graph_json2 = json.dumps(fig2, cls=plotly.utils.PlotlyJSONEncoder)
 
     return render(request, 'report_scanner/scanner_insights.html', {
         'scan_results': scan_results,
         'report_name': report_name,
+        'category_status': category_status,
         'graph_json': graph_json,
         'graph_json2': graph_json2
     })
