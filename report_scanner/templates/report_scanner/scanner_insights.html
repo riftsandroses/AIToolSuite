@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scanner Insights - {{ report_name }}</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,6 +59,21 @@
         .btn-back:hover {
             background-color: #0056b3;
         }
+        .btn-download {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            float: right;
+        }
+        .btn-download:hover {
+            background-color: #0056b3;
+            float: right;
+        }
+
     </style>
 </head>
 <body>
@@ -84,11 +100,13 @@
     </div>
 
     <br>
-    <br>
 
     <h2>Tabular Report of Findings</h2>    
 
     <a href="{% url 'report_scanner:report_list' %}" class="btn-back">Back to Report List</a>
+
+    <a href="#" id="download-excel" class="btn-download">Download Excel</a>
+
     <br>
     <!-- Scan Results Table -->
     <table>
@@ -159,6 +177,16 @@
             } catch (error) {
                 console.error("ERROR parsing graph_json2:", error);
             }
+        });
+
+        document.getElementById("download-excel").addEventListener("click", function () {
+            let table = document.querySelector("table"); // Select table
+            let ws = XLSX.utils.table_to_sheet(table); // Convert table to worksheet
+            let wb = XLSX.utils.book_new(); // Create a new workbook
+            XLSX.utils.book_append_sheet(wb, ws, "Scan Results"); // Add sheet to workbook
+
+            // Trigger file download
+            XLSX.writeFile(wb, "scan_results.xlsx");
         });
     </script>
 
