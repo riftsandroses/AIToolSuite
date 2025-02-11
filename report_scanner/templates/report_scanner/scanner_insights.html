@@ -13,7 +13,7 @@
             color: white;
             margin: 20px;
         }
-        h2 {
+        h2, h1 {
             text-align: center;
         }
         .charts-wrapper {
@@ -103,10 +103,9 @@
 </head>
 <body>
 
-    <h2>Overview of {{ report_name }}</h2>
+    <h1>Overview of {{ report_name }}</h1>
     <br>
     <br>
-
     <!-- Evaluation Summary Cards -->
     <div class="cards-container">
         {% for category, status in category_status.items %}
